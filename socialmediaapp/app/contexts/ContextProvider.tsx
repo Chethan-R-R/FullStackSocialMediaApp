@@ -1,0 +1,247 @@
+'use client'
+import {io,Socket} from 'socket.io-client'
+import { ChangeEvent, useEffect, useState } from "react"
+import { LoginRegisterContext } from "./ContextCreate"
+import {LoginUser, Register, followUnfollow, getUser, removefollower} from "@/fetchers/user"
+import { uploadPost } from "@/fetchers/post"
+const ProvideContext=({children}:{children:React.ReactNode})=>{
+    
+
+    const [token,setToken]=useState("")
+    const [userDetails,setUserDetails]=useState({
+        _id: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        profile_picture: "",
+        occupation: "",
+        followers: [""],
+        following: [""],
+        posts:[""],
+        feeds_id:"",
+        chats:new Map()
+    })
+    
+    const [strangerDetails,setstrangerDetials]=useState({
+        _id:"",
+        firstName: "Loading...",
+        lastName: "",
+        email: "",
+        profile_picture: "profile.svg",
+        occupation: "",
+        followers: [],
+        following: [],
+        posts:[],
+        feeds_id:""})
+
+    const [ProfileOrLogin,setProfile]=useState(0)
+    const [infolist,setInfolist]=useState<string[]>("Hello Stranger Wellcome...!".split(" "))
+    const [displayRegister,setDisplayRigister]=useState<boolean | undefined>()
+    const inputsIndex=[
+        {typeId1:"firstName",type1:"text",label1:"First Name",typeId2:"lastName",type2:"text",label2:"Last Name",buttonName:"Next",buttonId:1},
+        {typeId1:"email",type1:"text",label1:"Email",typeId2:"password",type2:"text",label2:"Password",buttonName:"Next",buttonId:2},
+        {typeId1:"profile_picture",type1:"file",label1:"Profile Picture",typeId2:"occupation",type2:"text",label2:"Occupation",buttonName:"Submit",buttonId:3},
+        {typeId1:"email",type1:"text",label1:"Email",typeId2:"password",type2:"text",label2:"Password",buttonName:"Submit",buttonId:4}
+    ]
+    const [inputContent,setInputContent]=useState(inputsIndex[0])
+    const  [registerDetails,setregisterDetails]=useState<fillUserDetails>({
+        firstName:"",
+        lastName:"",
+        email:"",
+        password:"",
+        profile_picture:"",
+        occupation:""
+    })
+    const [uploadpostdetails,setUploadPost]=useState<uploadpostdetails>({
+            post_picture:"",
+            posttitleinput:""
+        })
+
+    const [socket,setSocket]=useState<Socket>()
+    useEffect(()=>{
+        setTimeout(()=>{if(displayRegister===undefined){
+            setInfolist("Please Register if not yet and Login to Follow other people to watch their Post".split(" "))
+        }},3000)
+        
+    },[displayRegister])
+    useEffect(()=>{
+        const SocketData=io('http://localhost:3001',{
+            auth:{token:token}
+        })
+        setSocket(SocketData)
+    },[token])
+
+    function handleLoginRegister(isRegister:boolean){
+        if(isRegister){
+            setInputContent(inputsIndex[0])
+            setDisplayRigister(true)
+            setInfolist("Plese enter your First Name and Last Name and it is required".split(" "))
+        }
+        else {
+            setDisplayRigister(false)
+            setInfolist("Plese enter your email and password".split(" "))
+            setInputContent(inputsIndex[3])
+        }
+    }
+    function inputChange(e:ChangeEvent<HTMLInputElement>){
+        if(e.target.files){
+            const temp=e.target.files[0]
+            console.log(temp)
+            setregisterDetails(prev=>(
+                {...prev,[e.target.id]:temp}
+            ))
+            
+        }else{
+            setregisterDetails(prev=>(
+                {...prev,[e.target.id]:e.target.value}
+            ))
+        }
+        
+    }
+    function postUploadChange(e:ChangeEvent<HTMLInputElement>){
+        
+        if(e.target.files){
+            const temp=e.target.files[0]
+            setUploadPost(prev=>(
+                {...prev,[e.target.id]:temp}
+            ))
+            
+        }else{
+            setUploadPost(prev=>(
+                {...prev,[e.target.id]:e.target.value}
+            ))
+        }
+        
+    }
+    function handleNav(addZ:string,removez:string,removez2:string){
+        const add=document.querySelector(addZ) as HTMLElement
+        const remove1=document.querySelector(removez) as HTMLElement
+        const remove2=document.querySelector(removez2) as HTMLElement
+        if(add)add.style.zIndex='2'
+        if(remove1)remove1.style.zIndex='1'
+        if(remove2)remove2.style.zIndex='1'
+    }   
+    async function handlePostUpload(){
+        
+        if(uploadpostdetails.post_picture==="")setInfolist("Please select post to upload".split(" "))
+        else{
+            setInfolist("Post Uploaded".split(" "))
+            const res=await uploadPost(userDetails._id,token,uploadpostdetails)
+            if(res){
+                const user_get=await getUser(userDetails._id,token)
+                setUserDetails(user_get)
+                setTimeout(()=>handleNav('.profile','.main','.more'),2000)
+            }
+        }
+    }
+    async function handleSubmit(){
+        if(displayRegister){
+            const res=await Register(registerDetails)
+            if(res.error){
+                setInfolist("Email is already Registered".split(' '))
+                setInputContent(inputsIndex[1])
+                
+            }else{
+                setInfolist("Registration Successfull...! now you can LogIn".split(" "))
+                setDisplayRigister(undefined)
+            }
+            
+        }else{
+            await LoginUser(registerDetails)
+            .then(result=>{
+                if(result.token){
+                    setUserDetails(result.user_details)
+                    if(result.user_details){
+                        setToken(result.token)
+                        setInfolist(`Wellcome back ${result.user_details.firstName} ${result.user_details.lastName}`.split(" "))
+                        setTimeout(()=>setProfile(1),2500)
+                    }
+                }else{
+                    setInfolist(result.msg.split(" "))
+                }
+            })
+        }
+    }
+    function clickNext(buttonId:number){
+        if(buttonId!=3 && buttonId!=4 && registerDetails[`${inputsIndex[buttonId-1].typeId1}` as keyof typeof registerDetails]!="" && registerDetails[`${inputsIndex[buttonId-1].typeId2}` as keyof typeof registerDetails]!=""){
+            if(buttonId===1)setInfolist("Plese enter your Email and passord which is further used as LogIn credentials".split(" "))
+            else if(buttonId===2)setInfolist("You can upload profile photo and enter occupation,both are optional".split(" "))
+            setInputContent(inputsIndex[buttonId])
+        }else if(buttonId===3){
+            handleSubmit()
+        }else if(buttonId===4 && registerDetails[`${inputsIndex[buttonId-1].typeId1}` as keyof typeof registerDetails]!="" && registerDetails[`${inputsIndex[buttonId-1].typeId2}` as keyof typeof registerDetails]!=""){
+            handleSubmit()
+        }
+        else{
+            setInfolist("The following input cannot be empty".split(" "))
+        }
+        
+    }
+
+    function handleInfo(information:string){
+        setInfolist(information.split(" "))
+    }
+    async function followUnfollowUser(user_id:string){
+        const res=await followUnfollow(userDetails._id,user_id,token)
+        const user_get=await getUser(userDetails._id,token)
+        setUserDetails(user_get)
+        const stranger_get=await getUser(strangerDetails._id,token)
+        setstrangerDetials(stranger_get)
+    }
+    async function removeFollower(user_id:string){
+        const res=await removefollower(userDetails._id,user_id,token)
+        const user_get=await getUser(userDetails._id,token)
+        setUserDetails(user_get)
+    }
+    async function handleStranger(strangerOrMe:number,user_id:string){
+        setProfile(strangerOrMe)
+        
+        if(strangerOrMe===2){
+            handleNav('.profile','.main','.more')
+            const userData=await getUser(user_id,token)
+            setstrangerDetials(userData)
+        }
+        else {
+            setProfile(strangerOrMe)
+            handleNav('.main','.profile','.more')
+        }
+    }
+    async function refreshUser() {
+        const user_get=await getUser(userDetails._id,token)
+        setUserDetails(user_get)
+    }
+    async function refreshStranger() {
+        if(strangerDetails._id!==""){
+            const user_get=await getUser(strangerDetails._id,token)
+            setstrangerDetials(user_get)
+        }
+    }  
+    return(
+        <LoginRegisterContext.Provider value={{ProfileOrLogin,
+        infolist,
+        displayRegister,
+        handleLoginRegister,
+        inputContent,
+        inputChange,
+        clickNext,
+        registerDetails,
+        userDetails,
+        uploadpostdetails,
+        postUploadChange,
+        handlePostUpload,
+        handleInfo,
+        handleNav,
+        token,
+        followUnfollowUser,
+        removeFollower,
+        strangerDetails,
+        handleStranger,
+        refreshUser,
+        refreshStranger,
+        socket
+        }}>
+            {children}
+        </LoginRegisterContext.Provider>
+    )
+}
+export default ProvideContext
