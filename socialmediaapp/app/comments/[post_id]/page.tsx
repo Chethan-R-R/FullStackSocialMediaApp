@@ -13,6 +13,7 @@ const Comments=({params:{post_id}}:{params:{post_id:string}})=>{
       context.handleInfo("Login to see your followers")
     redirect('/')
     }
+    context.displayLoading(false)
     const [refreshComments,setRefresh]=useState(true)
     const [commentsList,setCommentsList]=useState<JSX.Element[]>()
     useEffect(()=>{

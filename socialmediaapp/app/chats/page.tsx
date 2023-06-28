@@ -11,6 +11,7 @@ const Chats=()=>{
     context.handleInfo("Login to see your Chats")
     redirect('/')
   }
+  context.displayLoading(false)
   useEffect(()=>{
   },[])
   return(
