@@ -11,8 +11,10 @@ export const DisplaySinglePost=({post_id,setContent}:{post_id:string,setContent:
     const[likeOrNot,setLike]=useState<boolean>()
     useEffect(()=>{  
       async function getdata() {
+        context.displayLoading(true)
         const post:Post=await getPost(post_id)
         const user:userDetails=await getUser(post.user_id,context.token)
+        context.displayLoading(false)
         setUserData(user)
         setPostData(post)
         setLike(post.likes.includes(context.userDetails._id))
@@ -23,7 +25,9 @@ export const DisplaySinglePost=({post_id,setContent}:{post_id:string,setContent:
     async function removePost() {
 
       if(postData){
+        context.displayLoading(true)
         const res=await deletePost(postData.user_id,post_id,context.token)
+        context.displayLoading(false)
       if(res){
         context.refreshUser()
         setContent(prev=>!prev)
@@ -34,7 +38,9 @@ export const DisplaySinglePost=({post_id,setContent}:{post_id:string,setContent:
     
     async function handleLike() {
       if(postData && userDetails){
+        context.displayLoading(true)
         const res=await likeDislikePost(postData._id,context.userDetails._id,context.token)
+        context.displayLoading(false)
       if(res)setLike(prev=>!prev)
       context.refreshUser()
       context.refreshStranger()

@@ -1,12 +1,16 @@
 import { getUser } from "@/fetchers/user"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import { LoginRegisterContext } from "../contexts/ContextCreate"
 
 export const ChatsList=({allchats,token,handleStranger}:{allchats:Map<string,string>,token:string,handleStranger:Function})=>{
     const [chatslist,setChatsList]=useState<JSX.Element[]>()
+    const context=useContext(LoginRegisterContext)
     useEffect(()=>{
         const list=Object.keys(allchats).map(async (key)=>{
+            context.displayLoading(true)
             const user:strangerDetails=await getUser(key,token)
+            context.displayLoading(false)
             return(
                 <div key={key} className="singlechat">
                 <div className="chatprofile" onClick={()=>handleStranger(2,key)}>

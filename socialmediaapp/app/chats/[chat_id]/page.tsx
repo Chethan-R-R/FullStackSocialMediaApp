@@ -21,7 +21,9 @@ const Chats=({params:{chat_id}}:{params:{chat_id:string}})=>{
   
   useEffect(()=>{
      async function getData() {
+      context.displayLoading(true)
       const userData:strangerDetails=await getUser(chat_id,context.token)
+      context.displayLoading(false)
       setStrangerData(userData)
     }
     getData()

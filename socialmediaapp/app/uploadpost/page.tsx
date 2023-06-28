@@ -13,7 +13,7 @@ const UploadPost=()=>{
       context.handleInfo("Login to upload post")
     redirect('/')
     }
-
+    context.displayLoading(false)
   return(
     <div className="mainpage">
         <div className='pagetitle'>

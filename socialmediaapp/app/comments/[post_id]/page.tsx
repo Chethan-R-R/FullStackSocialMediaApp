@@ -17,7 +17,9 @@ const Comments=({params:{post_id}}:{params:{post_id:string}})=>{
     const [commentsList,setCommentsList]=useState<JSX.Element[]>()
     useEffect(()=>{
       async function getPostdata() {
+        context.displayLoading(true)
         const CommenstData:comment[]=await getComments(post_id)
+        context.displayLoading(false)
         const list=CommenstData.map(comment=>(<Singlecomment key={comment.comment_id} comment={comment} userId={context.userDetails._id} deleteComment={DeleteComment}/>))
         setCommentsList(list)
       }getPostdata()
@@ -26,14 +28,18 @@ const Comments=({params:{post_id}}:{params:{post_id:string}})=>{
 
     async function AddComment() {
       if(userComment!=""){
+        context.displayLoading(true)
         const res=await addComment(post_id,context.userDetails._id,userComment,context.token)
+        context.displayLoading(false)
         setRefresh(prev=>!prev)
         setComment("")
       }
     }
 
     async function DeleteComment(comment_id:string) {
+      context.displayLoading(true)
       const res=await deleteComment(post_id,comment_id,context.token)
+      context.displayLoading(false)
       setRefresh(prev=>!prev)
     }
     return(

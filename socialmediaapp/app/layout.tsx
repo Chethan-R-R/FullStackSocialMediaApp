@@ -4,6 +4,7 @@ import './globals.css'
 import ProvideContext from '@/app/contexts/ContextProvider'
 import { NavBar } from './Components/NavBar'
 import More from './Components/More'
+import { Loading } from './Components/Loading'
 
 export const metadata={
   title:"",
@@ -15,6 +16,7 @@ const RootLayout=({children}:{children:React.ReactNode})=>{
     <html>
       <body>
       <ProvideContext>
+        <Loading/>
         <div className='root'>
             <More />
 

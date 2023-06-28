@@ -4,9 +4,10 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { LoginRegisterContext } from "./ContextCreate"
 import {LoginUser, Register, followUnfollow, getUser, removefollower} from "@/fetchers/user"
 import { uploadPost } from "@/fetchers/post"
+
 const ProvideContext=({children}:{children:React.ReactNode})=>{
     
-
+    const [Loading,setLoading]=useState(false)
     const [token,setToken]=useState("")
     const [userDetails,setUserDetails]=useState({
         _id: "",
@@ -125,8 +126,10 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
         
         if(uploadpostdetails.post_picture==="")setInfolist("Please select post to upload".split(" "))
         else{
-            setInfolist("Post Uploaded".split(" "))
+            displayLoading(true)
             const res=await uploadPost(userDetails._id,token,uploadpostdetails)
+            displayLoading(true)
+            setInfolist("Post Uploaded".split(" "))
             if(res){
                 const user_get=await getUser(userDetails._id,token)
                 setUserDetails(user_get)
@@ -136,7 +139,9 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
     }
     async function handleSubmit(){
         if(displayRegister){
+            displayLoading(true)
             const res=await Register(registerDetails)
+            displayLoading(false)
             if(res.error){
                 setInfolist("Email is already Registered".split(' '))
                 setInputContent(inputsIndex[1])
@@ -182,24 +187,30 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
         setInfolist(information.split(" "))
     }
     async function followUnfollowUser(user_id:string){
+        displayLoading(true)
         const res=await followUnfollow(userDetails._id,user_id,token)
         const user_get=await getUser(userDetails._id,token)
         setUserDetails(user_get)
         const stranger_get=await getUser(strangerDetails._id,token)
         setstrangerDetials(stranger_get)
+        displayLoading(false)
     }
     async function removeFollower(user_id:string){
+        displayLoading(true)
         const res=await removefollower(userDetails._id,user_id,token)
         const user_get=await getUser(userDetails._id,token)
         setUserDetails(user_get)
+        displayLoading(false)
     }
     async function handleStranger(strangerOrMe:number,user_id:string){
         setProfile(strangerOrMe)
         
         if(strangerOrMe===2){
+            displayLoading(true)
             handleNav('.profile','.main','.more')
             const userData=await getUser(user_id,token)
             setstrangerDetials(userData)
+            displayLoading(false)
         }
         else {
             setProfile(strangerOrMe)
@@ -207,15 +218,24 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
         }
     }
     async function refreshUser() {
+        displayLoading(true)
         const user_get=await getUser(userDetails._id,token)
         setUserDetails(user_get)
+        displayLoading(false)
     }
     async function refreshStranger() {
         if(strangerDetails._id!==""){
+            displayLoading(true)
             const user_get=await getUser(strangerDetails._id,token)
             setstrangerDetials(user_get)
+            displayLoading(false)
         }
     }  
+
+    function displayLoading(display:boolean){
+        setLoading(display)
+    }
+
     return(
         <LoginRegisterContext.Provider value={{ProfileOrLogin,
         infolist,
@@ -238,7 +258,9 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
         handleStranger,
         refreshUser,
         refreshStranger,
-        socket
+        socket,
+        Loading,
+        displayLoading
         }}>
             {children}
         </LoginRegisterContext.Provider>

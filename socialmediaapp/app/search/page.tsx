@@ -11,12 +11,16 @@ const Search=()=>{
       context.handleInfo("Login to search people")
     redirect('/')
     }
+    context.displayLoading(false)
     const [searchText,setSearchText]=useState("dinkacgika")
     const [searchresult,setSearchResult]=useState()
     useEffect(()=>{
       async function search(){
+        context.displayLoading(true)
         const resultData=await SearchUser(searchText)
+        context.displayLoading(false)
         const resultList=resultData.map((userdata:userDetails)=>{
+          
           return(
             <div key={userdata._id} className="searcheuser" onClick={()=>context.handleStranger(2,userdata._id)}>
               <svg id="eDwVXMKnjkr1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 2400 900" preserveAspectRatio="none" shape-rendering="geometricPrecision" text-rendering="geometricPrecision"><defs><filter id="eDwVXMKnjkr4-filter" x="-150%" width="400%" y="-150%" height="400%"><feGaussianBlur id="eDwVXMKnjkr4-filter-drop-shadow-0-blur" in="SourceAlpha" stdDeviation="10,10"/><feOffset id="eDwVXMKnjkr4-filter-drop-shadow-0-offset" dx="0" dy="0" result="tmp"/><feFlood id="eDwVXMKnjkr4-filter-drop-shadow-0-flood" flood-color="#0ae900"/><feComposite id="eDwVXMKnjkr4-filter-drop-shadow-0-composite" operator="in" in2="tmp"/><feMerge id="eDwVXMKnjkr4-filter-drop-shadow-0-merge" result="result"><feMergeNode id="eDwVXMKnjkr4-filter-drop-shadow-0-merge-node-1"/><feMergeNode id="eDwVXMKnjkr4-filter-drop-shadow-0-merge-node-2" in="SourceGraphic"/></feMerge></filter><filter id="eDwVXMKnjkr5-filter" x="-150%" width="400%" y="-150%" height="400%"><feGaussianBlur id="eDwVXMKnjkr5-filter-drop-shadow-0-blur" in="SourceAlpha" stdDeviation="20,20"/><feOffset id="eDwVXMKnjkr5-filter-drop-shadow-0-offset" dx="0" dy="0" result="tmp"/><feFlood id="eDwVXMKnjkr5-filter-drop-shadow-0-flood" flood-color="#0ae900"/><feComposite id="eDwVXMKnjkr5-filter-drop-shadow-0-composite" operator="in" in2="tmp"/><feMerge id="eDwVXMKnjkr5-filter-drop-shadow-0-merge" result="result"><feMergeNode id="eDwVXMKnjkr5-filter-drop-shadow-0-merge-node-1"/><feMergeNode id="eDwVXMKnjkr5-filter-drop-shadow-0-merge-node-2" in="SourceGraphic"/></feMerge></filter></defs><path d="M580.801617,84.793651h1287.98636v609.110259h-539.563292-730.023262-200.974142L104.186325,399.862954L421.172316,82.876962l159.629301,1.916689Z" transform="translate(-76.052101 59.336951)" fill="#00f" stroke-width="4"/><path d="M580.801617,84.793651h1287.98636v609.110259l-162.937513.000079-376.625779-.000079h-730.023262-200.974142L104.186325,399.862954L421.172316,82.876962l159.629301,1.916689Z" transform="translate(-76.052101 61.253637)" opacity="0.5" stroke-width="4"/><path d="M347.573098,642.044893h627.29966l51.859015,51.859015l692.242957.000021l48.127032-51.859036h101.686214" transform="translate(-76.052116-430.338926)" filter="url(#eDwVXMKnjkr4-filter)" fill="none" stroke="#ddffdf" stroke-width="10"/><path d="M601.829966,84.793651h-199.769313L93.316221,393.538083L398.227277,698.449139h200.974142" transform="translate(-76.052097 59.336948)" filter="url(#eDwVXMKnjkr5-filter)" fill="none" stroke="#bdffc0" stroke-width="35"/></svg>
@@ -33,9 +37,11 @@ const Search=()=>{
           </div>
           )
         })
+      
         setSearchResult(resultList)
       }
-      search()
+      if(searchText!=""){
+      search()}
     },[searchText])
     return(
       <div className="mainpage">

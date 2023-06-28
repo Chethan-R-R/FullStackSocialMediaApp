@@ -11,7 +11,7 @@ const Post=({params:{user_id,post_id}}:{params:{user_id:string,post_id:string}})
     context.handleInfo("Login to see your followers")
     redirect('/')
   }
-
+  context.displayLoading(false)
     
     const [content,setContent]=useState(true)
 

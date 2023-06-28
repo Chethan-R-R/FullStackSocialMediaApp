@@ -12,17 +12,22 @@ const MyFeed=()=>{
     context.handleInfo("Login to see your followers")
     redirect('/')
   }
+  context.displayLoading(false)
   const [content,setContent]=useState(true)
   const [feeds,setFeeds]=useState([<div key={0} className="nofeed"><h2>Posts of people you are following will appear here</h2></div>])
   async function handleLike(post_id:string) {
+    context.displayLoading(true)
       const res=await likeDislikePost(post_id,context.userDetails._id,context.token)
+      context.displayLoading(false)
     context.refreshUser()
     context.refreshStranger()
     
   }
   useEffect(()=>{
     async function handleUserFeed() {
+      context.displayLoading(true)
       const feedsData:Feed=await getUserFeed(context.userDetails.feeds_id,context.token)
+      context.displayLoading(false)
       const feedsList=feedsData.feeds.map(feed=>{
         return <div key={feed}>
           <DisplaySinglePost key={feed} post_id={feed} setContent={setContent} />

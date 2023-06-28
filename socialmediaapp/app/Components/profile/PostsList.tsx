@@ -8,7 +8,9 @@ export const PostsList=({user}:{user:userDetails|strangerDetails})=>{
     const [listOfPost,setPostList]=useState()
     useEffect(()=>{
         async function allPost() {
+            context.displayLoading(true)
             const data=await postList(user._id)
+            context.displayLoading(false)
             if(data){
                 const list=data.map((post:Post)=>{
                     return(

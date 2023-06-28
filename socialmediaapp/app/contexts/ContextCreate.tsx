@@ -22,7 +22,9 @@ type providertype={
     handleStranger:Function,
     refreshUser:Function,
     refreshStranger:Function,
-    socket:Socket|undefined
+    socket:Socket|undefined,
+    Loading:boolean,
+    displayLoading:Function
 }
 const LoginRegisterContext=createContext<providertype>({ProfileOrLogin:0,infolist:[""],
 displayRegister:undefined,
@@ -67,7 +69,9 @@ feeds_id:""},
 handleStranger:Function,
 refreshUser:Function,
 refreshStranger:Function,
-socket:undefined
+socket:undefined,
+Loading:false,
+displayLoading:Function
 })
 
 export {LoginRegisterContext}
