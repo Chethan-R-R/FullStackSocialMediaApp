@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
 import user from '../models/user'
 import feeds from '../models/feeds'
-
+import AutoDelete from '../models/autoDelete'
 const register=async (req:any,res:any)=>{
     try{
         const profile_picture=req.file
@@ -28,6 +28,10 @@ const register=async (req:any,res:any)=>{
             feeds_id:feedsSaved._id
         })
         const userSaved=await newUser.save()
+        const usersToDeletelist=await AutoDelete.findById(process.env.usersToDeleteId)
+        usersToDeletelist?.usersToDelete.push(userSaved.id)
+        const usersrToDeleteListSaved=await usersToDeletelist?.save()
+        
         res.status(201).json(userSaved)
     }catch(err){
         console.log(err)

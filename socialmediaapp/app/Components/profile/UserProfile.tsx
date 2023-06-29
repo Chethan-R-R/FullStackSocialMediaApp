@@ -26,14 +26,12 @@ const  Profile=()=>{
             <div className="accountdetails">
                 <Link href='/followers' onClick={()=>{
                     context.handleNav('.main','.profile','.more')
-                    context.displayLoading(true)
                 }} className='followers'>
                     <h2>Followers</h2>
                     <h2>{userDetails.followers.length}</h2>
                 </Link>
                 <Link href='/following' onClick={()=>{
                     context.handleNav('.main','.profile','.more')
-                    context.displayLoading(true)
                 }} className='following'>
                     <h2>Following</h2>
                     <h2>{userDetails.following.length}</h2>

@@ -8,7 +8,6 @@ const More=()=>{
         <div className='more'>
             <div className='morecontainer'>
             <Link href='/search' onClick={()=>{
-              context.displayLoading(true)
               context.handleNav('.main','.profile','.more')              
             }}>
             <div className='search'>
@@ -19,7 +18,6 @@ const More=()=>{
             </div>
             </Link>
             <Link href='/myFeed' onClick={()=>{
-              context.displayLoading(true)
               context.handleNav('.main','.profile','.more')              
             }}>
             <div className='showfeed'>
@@ -32,7 +30,7 @@ const More=()=>{
             </Link>
             
             <Link href='/chats' onClick={()=>{
-              context.displayLoading(true)
+              context.refreshUser()
               context.handleNav('.main','.profile','.more')              
             }}>
             <div className='showfollowing'>
@@ -44,7 +42,6 @@ const More=()=>{
             </div>
             </Link>
             <Link href='/uploadpost' onClick={()=>{
-              context.displayLoading(true)
               context.handleNav('.main','.profile','.more')              
             }}>
             <div className='uploadpost'>

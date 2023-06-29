@@ -1,5 +1,6 @@
 import posts from "../models/posts"
 import user from "../models/user"
+import AutoDelete from "../models/autoDelete"
 
 import feeds from "../models/feeds"
 import { ObjectId } from "mongodb"
@@ -11,7 +12,6 @@ type comment={
     comment:string
 }
 export const uploadPost=async( req:any,res:any)=>{
-    console.log(req.file,req.body)
     try{
         const post_picture=req.file
         const {user_id,
@@ -106,9 +106,13 @@ export const addComment=async(req:any,res:any)=>{
         
         const Post=await posts.findById(post_id)
         if(Post){
-            
-            Post.comments.push({commentor_id,comment})
+            Post.comments.push({
+                commentor_id,
+                comment})
             const PostSaved=await Post.save()
+            const commentsToDeleteList=await AutoDelete.findById(process.env.usersToDeleteId)
+            commentsToDeleteList?.commentsToDelete.set(post_id,commentor_id)
+            await commentsToDeleteList?.save()
             res.status(200).json(PostSaved)
         }else throw("post not found")
     }catch(err){
@@ -121,8 +125,6 @@ export const removePost=async (req:any,res:any)=>{
         const {post_id,user_id}=req.body
         const User=await user.findById(user_id)
         const Post=await posts.findById(post_id)
-        console.log(User)
-        console.log(Post)
         if(user_id===Post?.user_id && User){
             
             if(User.followers){

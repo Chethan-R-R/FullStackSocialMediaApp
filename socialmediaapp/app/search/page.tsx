@@ -11,7 +11,6 @@ const Search=()=>{
       context.handleInfo("Login to search people")
     redirect('/')
     }
-    context.displayLoading(false)
     const [searchText,setSearchText]=useState("dinkacgika")
     const [searchresult,setSearchResult]=useState()
     useEffect(()=>{

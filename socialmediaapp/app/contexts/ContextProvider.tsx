@@ -87,7 +87,6 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
     function inputChange(e:ChangeEvent<HTMLInputElement>){
         if(e.target.files){
             const temp=e.target.files[0]
-            console.log(temp)
             setregisterDetails(prev=>(
                 {...prev,[e.target.id]:temp}
             ))

@@ -7,7 +7,6 @@ import {   useContext, useEffect, useRef, useState } from "react"
 const Chats=({params:{chat_id}}:{params:{chat_id:string}})=>{
     const context=useContext(LoginRegisterContext)
     const socket=context.socket
-    console.log(context.userDetails)
   if(context.userDetails._id===""){
     context.handleNav('.profile','.main','.more')
     context.handleInfo("Login to see your Chats")
@@ -23,8 +22,8 @@ const Chats=({params:{chat_id}}:{params:{chat_id:string}})=>{
      async function getData() {
       context.displayLoading(true)
       const userData:strangerDetails=await getUser(chat_id,context.token)
-      context.displayLoading(false)
       setStrangerData(userData)
+      context.displayLoading(false)
     }
     getData()
   },[])
@@ -38,8 +37,8 @@ const Chats=({params:{chat_id}}:{params:{chat_id:string}})=>{
       scroll.current.scrollTop=scroll.current.scrollHeight
     }
   },[messageList])
+
   socket?.on('history',(data:any)=>{
-    console.log(data)
     const me=context.userDetails._id
     const chatlist=data.chatHistory.chats?.map((chat:{userId:string,message:string})=>{
             if(chat.userId===me){

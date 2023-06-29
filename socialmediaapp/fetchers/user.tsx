@@ -1,6 +1,8 @@
 import Login from "@/app/Components/loginOrRegister/Login"
 
 export const Register=async (userDetails:fillUserDetails) => {
+    try{
+
     
     const user=new FormData()
     user.append("firstName",userDetails.firstName)
@@ -14,9 +16,13 @@ export const Register=async (userDetails:fillUserDetails) => {
         body:user
     })
     return Register.json()
+}catch(err){
+    console.log(err)
+}
 }
 
 export const LoginUser=async (userDetails:fillUserDetails) => {
+    try{
     const user=new FormData()
     user.append("email",userDetails.email)
     user.append("password",userDetails.password)
@@ -26,8 +32,12 @@ export const LoginUser=async (userDetails:fillUserDetails) => {
         body:user
     })
     return Login.json()
+}catch(err){
+    console.log(err)
+}
 }
 export const getUser=async (user_id:string,token:string) => {
+    try{
     const User=await fetch(`http://localhost:3001/user/id/${user_id}`,{
         method:"GET",
         headers:{
@@ -35,9 +45,13 @@ export const getUser=async (user_id:string,token:string) => {
         }
     })
     return User.json()
+}catch(err){
+    console.log(err)
+}
 }
 
 export const followUnfollow=async (from_id:string,to_id:string,token:string)=>{
+    try{
     const res=await fetch(`http://localhost:3001/user/${from_id}/followUnfollow/${to_id}`,{
         method:"PATCH",
         headers:{
@@ -45,8 +59,12 @@ export const followUnfollow=async (from_id:string,to_id:string,token:string)=>{
         }
     })
     return res.json()
+}catch(err){
+    console.log(err)
+}
 }
 export const removefollower=async (from_id:string,to_id:string,token:string)=>{
+    try{
     const res=await fetch(`http://localhost:3001/user/${from_id}/removeFollower/${to_id}`,{
         method:"PATCH",
         headers:{
@@ -54,18 +72,24 @@ export const removefollower=async (from_id:string,to_id:string,token:string)=>{
         }
     })
     return res.json()
+}catch(err){
+    console.log(err)
+}
 }
 
 export const SearchUser=async (searchtext:string)=>{
+    try{
     const res=await fetch(`http://localhost:3001/user/search/${searchtext}`,{
         method:"GET"
     })
-    console.log(res)
     return res.json()
+}catch(err){
+    console.log(err)
+}
 }
 
 export const getUserFeed=async (feed_id:string,token:string)=>{
-    console.log(feed_id)
+    try{
     const res=await fetch(`http://localhost:3001/user/userFeed/${feed_id}`,{
         method:"GET",
         headers:{
@@ -73,4 +97,7 @@ export const getUserFeed=async (feed_id:string,token:string)=>{
         }
     })
     return res.json()
+}catch(err){
+    console.log(err)
+}
 }

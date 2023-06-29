@@ -5,13 +5,11 @@ import {  useContext, useEffect, useState } from "react"
 import { ChatsList } from "./ChatsList"
 const Chats=()=>{
     const context=useContext(LoginRegisterContext)
-    console.log(context.userDetails)
   if(context.userDetails._id===""){
     context.handleNav('.profile','.main','.more')
     context.handleInfo("Login to see your Chats")
     redirect('/')
   }
-  context.displayLoading(false)
   useEffect(()=>{
   },[])
   return(

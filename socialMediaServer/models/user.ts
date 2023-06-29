@@ -48,6 +48,7 @@ const userSchema=new mongoose.Schema(
         },
         chats:{
             type:Map,
+            of:String,
             default:()=>new Map()
         }
     },{timestamps:true}

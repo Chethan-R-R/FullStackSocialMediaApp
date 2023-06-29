@@ -13,35 +13,36 @@ const Comments=({params:{post_id}}:{params:{post_id:string}})=>{
       context.handleInfo("Login to see your followers")
     redirect('/')
     }
-    context.displayLoading(false)
     const [refreshComments,setRefresh]=useState(true)
     const [commentsList,setCommentsList]=useState<JSX.Element[]>()
     useEffect(()=>{
       async function getPostdata() {
         context.displayLoading(true)
         const CommenstData:comment[]=await getComments(post_id)
-        context.displayLoading(false)
         const list=CommenstData.map(comment=>(<Singlecomment key={comment.comment_id} comment={comment} userId={context.userDetails._id} deleteComment={DeleteComment}/>))
         setCommentsList(list)
+        context.displayLoading(false)
       }getPostdata()
     },[post_id,refreshComments])
+
     const [userComment,setComment]=useState("")
 
     async function AddComment() {
+      context.displayLoading(true)
       if(userComment!=""){
-        context.displayLoading(true)
+        
         const res=await addComment(post_id,context.userDetails._id,userComment,context.token)
-        context.displayLoading(false)
         setRefresh(prev=>!prev)
         setComment("")
       }
+      context.displayLoading(false)
     }
 
     async function DeleteComment(comment_id:string) {
       context.displayLoading(true)
       const res=await deleteComment(post_id,comment_id,context.token)
-      context.displayLoading(false)
       setRefresh(prev=>!prev)
+      context.displayLoading(false)
     }
     return(
       <div className="mainpage">

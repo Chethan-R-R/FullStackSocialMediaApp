@@ -12,7 +12,6 @@ const MyFeed=()=>{
     context.handleInfo("Login to see your followers")
     redirect('/')
   }
-  context.displayLoading(false)
   const [content,setContent]=useState(true)
   const [feeds,setFeeds]=useState([<div key={0} className="nofeed"><h2>Posts of people you are following will appear here</h2></div>])
   async function handleLike(post_id:string) {

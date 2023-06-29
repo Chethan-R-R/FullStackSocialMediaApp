@@ -14,6 +14,12 @@ import { Socket } from "socket.io";
 import Chats from "./models/chats";
 import user from "./models/user";
 import { JwtPayload } from "jsonwebtoken";
+import cron from 'node-cron'
+import {  deleteNewUsers } from "./controllers/AutoDeleteUserData";
+import fs from 'fs'
+import path from 'path'
+
+
 const forms=multer()
 
 dotenv.config()
@@ -23,6 +29,8 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors())
 const httpserver=require('http').Server(app)
+
+
 const io=require('socket.io')(httpserver,{
     cors:{
         origin:"http://localhost:3000"
@@ -31,9 +39,7 @@ const io=require('socket.io')(httpserver,{
 
 app.use("/uploads",express.static('./uploads'))
 const connectedUser=new Map()
-app.get('/testsocket',(req:any,res:any)=>{
-    res.sendFile(__dirname+'/test.html')
-})
+
 
 
 const storage=multer.diskStorage({
@@ -48,20 +54,16 @@ const storage=multer.diskStorage({
 const upload=multer({storage})
 
 io.on('connection',async (socket:Socket)=>{
-    console.log("user trying to connect")
     const token=socket.handshake.auth.token
     let userData:any
     try{    
         const isverified:{id:string}|string | false | JwtPayload=verifyChatToken(token)
         if(isverified && typeof isverified!=='boolean' && typeof isverified!=='string' ){
             userData=await user.findById(isverified.id)
-            console.log(userData.firstName,'connected')
             connectedUser.set(isverified.id,socket.id)
-            console.log(connectedUser)
         }else throw('token invalid')
         
     }catch(err){
-        console.log('invalid token')
         socket.disconnect(true)
         return false
     }
@@ -69,7 +71,6 @@ io.on('connection',async (socket:Socket)=>{
         
     })
     socket.on('gethistoy',async (data:{chatId:string})=>{
-        console.log('asked for data')
         const chatHistory=await Chats.findById(data.chatId)
         socket.emit('history',{chatHistory})
     })
@@ -97,7 +98,7 @@ io.on('connection',async (socket:Socket)=>{
             
             if(userData && user2){
                 userData.chats.set(user2._id.toString(),savedChat._id)
-                user2.chats.set(userData._id.toString(),savedChat._id)
+                user2.chats.set(userData._id.toString(),savedChat._id.toString())
                 userData.save()
                 user2.save()
             }
@@ -105,11 +106,16 @@ io.on('connection',async (socket:Socket)=>{
     })
 
     socket.on('disconnect',()=>{
-        console.log('user disconnected')
         connectedUser.delete(userData?._id)
     })
 })
 //const upload=multer({dest:'uploads'})
+
+export function deleteImage(fileName:string){
+    const imgPath=path.join(__dirname,'uploads',fileName)
+    console.log(imgPath)
+        fs.unlink(imgPath,(err)=>console.log(err))
+}
 app.post("/auth/register",upload.single("profile_picture"),register)
 app.post('/posts/upload',verifyToken,upload.single("post_picture"),uploadPost)
 app.use(forms.any())
@@ -117,6 +123,9 @@ app.use("/auth",authRoutes)
 app.use("/user",users)
 app.use("/posts",posts)
 
+cron.schedule('0 0 * * *',()=>{
+    deleteNewUsers()
+})
 
 const PORT=process.env.port || 6001
 mongoose.connect(process.env.DB_URI!

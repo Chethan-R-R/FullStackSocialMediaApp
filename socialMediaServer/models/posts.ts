@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 
 const commentsSchema=new mongoose.Schema({
-    
     commentor_id:{
         type:String,
         required:true

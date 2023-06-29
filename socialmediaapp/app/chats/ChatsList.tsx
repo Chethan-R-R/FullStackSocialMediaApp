@@ -6,7 +6,6 @@ import { LoginRegisterContext } from "../contexts/ContextCreate"
 export const ChatsList=({allchats,token,handleStranger}:{allchats:Map<string,string>,token:string,handleStranger:Function})=>{
     const [chatslist,setChatsList]=useState<JSX.Element[]>()
     const context=useContext(LoginRegisterContext)
-    context.displayLoading(false)
     useEffect(()=>{
         const list=Object.keys(allchats).map(async (key)=>{
             context.displayLoading(true)
