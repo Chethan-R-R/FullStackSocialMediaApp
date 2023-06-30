@@ -23,7 +23,7 @@ const register=async (req:any,res:any)=>{
             lastName,
             email,
             password:passwordHash,  
-            profile_picture:profile_picture? profile_picture.filename:"profile.svg  ",
+            profile_picture:profile_picture? profile_picture.filename:"profile.svg",
             occupation,
             feeds_id:feedsSaved._id
         })
