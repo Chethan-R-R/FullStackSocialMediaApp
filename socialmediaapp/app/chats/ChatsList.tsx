@@ -2,10 +2,14 @@ import { getUser } from "@/fetchers/user"
 import Link from "next/link"
 import { useContext, useEffect, useState } from "react"
 import { LoginRegisterContext } from "../contexts/ContextCreate"
+import Info2 from "../Components/info2"
 
 export const ChatsList=({allchats,token,handleStranger}:{allchats:Map<string,string>,token:string,handleStranger:Function})=>{
-    const [chatslist,setChatsList]=useState<JSX.Element[]>()
+    const [chatslist,setChatsList]=useState([])
     const context=useContext(LoginRegisterContext)
+    useEffect(()=>{
+        context.handleInfo2("No chat history found. To start a conversation, find people, open their profile, and tap on Message")
+      },[])
     useEffect(()=>{
         const list=Object.keys(allchats).map(async (key)=>{
             context.displayLoading(true)
@@ -30,7 +34,7 @@ export const ChatsList=({allchats,token,handleStranger}:{allchats:Map<string,str
     return(
         <div className="chatlist">
             {
-                chatslist
+                chatslist.length===0?<Info2/>:chatslist
             }
         </div>
     )

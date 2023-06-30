@@ -37,6 +37,7 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
 
     const [ProfileOrLogin,setProfile]=useState(0)
     const [infolist,setInfolist]=useState<string[]>("Hello Stranger Wellcome...!".split(" "))
+    const [infolist2,setInfolist2]=useState<string[]>("All the users data will autometically deleted every 24 hours".split(" "))
     const [displayRegister,setDisplayRigister]=useState<boolean | undefined>()
     const inputsIndex=[
         {typeId1:"firstName",type1:"text",label1:"First Name",typeId2:"lastName",type2:"text",label2:"Last Name",buttonName:"Next",buttonId:1},
@@ -123,7 +124,7 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
     }   
     async function handlePostUpload(){
         
-        if(uploadpostdetails.post_picture==="")setInfolist("Please select post to upload".split(" "))
+        if(uploadpostdetails.post_picture==="")setInfolist2("Please select post to upload".split(" "))
         else{
             displayLoading(true)
             const res=await uploadPost(userDetails._id,token,uploadpostdetails)
@@ -183,7 +184,11 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
     }
 
     function handleInfo(information:string){
-        setInfolist(information.split(" "))
+        setTimeout(()=>{setInfolist(information.split(" "))},240)
+        
+    }
+    function handleInfo2(information:string){
+        setTimeout(()=>{setInfolist2(information.split(" "))},240)
     }
     async function followUnfollowUser(user_id:string){
         displayLoading(true)
@@ -259,7 +264,9 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
         refreshStranger,
         socket,
         Loading,
-        displayLoading
+        displayLoading,
+        infolist2,
+        handleInfo2
         }}>
             {children}
         </LoginRegisterContext.Provider>

@@ -1,7 +1,8 @@
 'use client'
 
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { LoginRegisterContext } from "./contexts/ContextCreate"
+import Info2 from "./Components/info2"
 
 const Home=()=>{
   const conext=useContext(LoginRegisterContext)
@@ -10,6 +11,7 @@ const Home=()=>{
         <div className="mainpage">
           <div className='pagetitle'>
             <h1>Home</h1>
+            <Info2 />
           </div>
         </div>
       )

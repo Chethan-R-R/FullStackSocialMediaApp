@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import {  useContext, useEffect, useState } from "react"
 import { DisplaySinglePost } from "../post/[user_id]/[post_id]/DisplaySinglePost"
 import { likeDislikePost } from "@/fetchers/post"
+import Info2 from "../Components/info2"
 const MyFeed=()=>{
   const context=useContext(LoginRegisterContext)
   if(context.userDetails._id===""){
@@ -12,6 +13,7 @@ const MyFeed=()=>{
     context.handleInfo("Login to see your followers")
     redirect('/')
   }
+  
   const [content,setContent]=useState(true)
   const [feeds,setFeeds]=useState([<div key={0} className="nofeed"><h2>Posts of people you are following will appear here</h2></div>])
   async function handleLike(post_id:string) {
@@ -32,6 +34,9 @@ const MyFeed=()=>{
           <DisplaySinglePost key={feed} post_id={feed} setContent={setContent} />
         </div>
       })
+      if(feedsList.length==0){
+        context.handleInfo2("The post uploaded by people you are following will appear here")
+      }
       setFeeds(feedsList)
     }
     handleUserFeed()
@@ -42,7 +47,9 @@ const MyFeed=()=>{
         <h1>My Feed</h1>
       </div>
       <div className="maincontent">
-        {feeds}
+        {
+          feeds.length!=0?feeds:<Info2 />
+        }
       </div>
     </div>
   )

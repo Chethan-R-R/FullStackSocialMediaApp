@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react"
 import { LoginRegisterContext } from "../contexts/ContextCreate"
 import { redirect } from "next/navigation"
 import { getUser } from "@/fetchers/user"
+import Info2 from "../Components/info2"
 const Following=()=>{
   const context=useContext(LoginRegisterContext)
 
@@ -11,11 +12,15 @@ const Following=()=>{
       context.handleInfo("Login to see your followers")
     redirect('/')
     }
-    const [followersList,setFollowersList]=useState()
+    const [followersList,setFollowersList]=useState([])
+
+    useEffect(()=>{
+      context.handleInfo2("You are currently not following anyone. You can follow people by using our search option")
+    },[])
     useEffect(()=>{
       context.displayLoading(true)
       const List=context.userDetails.following.map(async(follower)=>{
-        const followerData:userDetails=await getUser(follower,context.token).then(res=>res)
+        const followerData:userDetails=await getUser(follower,context.token)
         return(
           <div key={follower} className="singlefollower" >
             <svg id="e3dAiQj2n5Y1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 1000 300" preserveAspectRatio="none" shape-rendering="geometricPrecision" text-rendering="geometricPrecision"><defs><filter id="eCFSnusK9MR4-filter" x="-150%" width="400%" y="-150%" height="400%"><feGaussianBlur id="eCFSnusK9MR4-filter-drop-shadow-0-blur" in="SourceAlpha" stdDeviation="10,10"/><feOffset id="eCFSnusK9MR4-filter-drop-shadow-0-offset" dx="0" dy="0" result="tmp"/><feFlood id="eCFSnusK9MR4-filter-drop-shadow-0-flood" flood-color="#bdffc0"/><feComposite id="eCFSnusK9MR4-filter-drop-shadow-0-composite" operator="in" in2="tmp"/><feMerge id="eCFSnusK9MR4-filter-drop-shadow-0-merge" result="result"><feMergeNode id="eCFSnusK9MR4-filter-drop-shadow-0-merge-node-1"/><feMergeNode id="eCFSnusK9MR4-filter-drop-shadow-0-merge-node-2" in="SourceGraphic"/></feMerge></filter></defs><path d="M149.999999,53.240311h701.699064L969.311795,237.50026h-819.311796" transform="translate(.000001 0)" fill="#00f" stroke-width="2"/><path d="M149.999999,53.240311h701.699064L969.311795,237.50026h-819.311796" transform="translate(.000001 0)" opacity="0.5" stroke-width="2"/><path id="followbutton" d="M670.052731,210.057289l-58.806366,58.806367h235.225465l56.846154-56.846154-233.265253-1.960213Z" transform="translate(.000001 0)" filter="url(#eCFSnusK9MR4-filter)" fill="#bdffc0" stroke="#bdffc0" stroke-width="2"/></svg>
@@ -35,8 +40,8 @@ const Following=()=>{
           </div>
         )
       })
-      context.displayLoading(false)
       setFollowersList(List)
+      context.displayLoading(false)
     },[context.userDetails._id,context.userDetails.followers])
 
     return(
@@ -47,7 +52,7 @@ const Following=()=>{
         <div className="maincontent">
           <div className="scroll">
           <div className="" >
-          {followersList}   
+          {followersList.length===0?<Info2/>:followersList}   
           </div>  
           </div>
         </div>

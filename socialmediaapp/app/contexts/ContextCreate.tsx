@@ -24,7 +24,9 @@ type providertype={
     refreshStranger:Function,
     socket:Socket|undefined,
     Loading:boolean,
-    displayLoading:Function
+    displayLoading:Function,
+    infolist2:string[],
+    handleInfo2:Function
 }
 const LoginRegisterContext=createContext<providertype>({ProfileOrLogin:0,infolist:[""],
 displayRegister:undefined,
@@ -71,7 +73,9 @@ refreshUser:Function,
 refreshStranger:Function,
 socket:undefined,
 Loading:false,
-displayLoading:Function
+displayLoading:Function,
+infolist2:[""],
+handleInfo2:Function
 })
 
 export {LoginRegisterContext}
