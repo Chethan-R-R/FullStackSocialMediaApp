@@ -73,6 +73,10 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
         setSocket(SocketData)
     },[token])
 
+    socket?.on("refresh",()=>{
+        refreshUser()
+    })
+
     function handleLoginRegister(isRegister:boolean){
         if(isRegister){
             setInputContent(inputsIndex[0])

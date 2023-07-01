@@ -10,8 +10,6 @@ const Chats=()=>{
     context.handleInfo("Login to see your Chats")
     redirect('/')
   }
-  useEffect(()=>{
-  },[])
   return(
     <div className="mainpage">
       <div className='pagetitle'>
