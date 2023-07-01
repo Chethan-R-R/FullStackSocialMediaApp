@@ -27,7 +27,9 @@ const express=require('express')
 const app=express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cors())
+app.use(cors({
+    origin:"http://localhost:3000"
+}))
 const httpserver=require('http').Server(app)
 
 
@@ -67,9 +69,6 @@ io.on('connection',async (socket:Socket)=>{
         socket.disconnect(true)
         return false
     }
-    socket.on('createChat',async(data:{chatId:string})=>{
-        
-    })
     socket.on('gethistoy',async (data:{chatId:string})=>{
         const chatHistory=await Chats.findById(data.chatId)
         socket.emit('history',{chatHistory})
@@ -102,6 +101,7 @@ io.on('connection',async (socket:Socket)=>{
                 userData.save()
                 user2.save()
             }
+            socket.broadcast.to(connectedUser.get(data.receiverId)).emit('refresh',)
         }
     })
 
@@ -109,7 +109,6 @@ io.on('connection',async (socket:Socket)=>{
         connectedUser.delete(userData?._id)
     })
 })
-//const upload=multer({dest:'uploads'})
 
 export function deleteImage(fileName:string){
     const imgPath=path.join(__dirname,'uploads',fileName)
