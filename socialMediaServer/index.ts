@@ -19,6 +19,7 @@ import cron from 'node-cron'
 import {  deleteNewUsers } from "./controllers/AutoDeleteUserData";
 import fs from 'fs'
 import path from 'path'
+import http from 'http'
 
 
 const forms=multer()
@@ -121,6 +122,13 @@ app.use(forms.any())
 app.use("/auth",authRoutes)
 app.use("/user",users)
 app.use("/posts",posts)
+
+app.get("/restart",(req:any,res:any)=>{
+    res.sendStatus(200)
+})
+cron.schedule('*/10 * * * *',()=>{
+    http.get('https://rrmedia-api.onrender.com/restart',(res)=>{})
+})
 
 cron.schedule('0 1 * * *',()=>{
     deleteNewUsers()
