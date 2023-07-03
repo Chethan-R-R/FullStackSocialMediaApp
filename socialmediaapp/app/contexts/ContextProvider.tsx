@@ -134,6 +134,11 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
             const res=await uploadPost(userDetails._id,token,uploadpostdetails)
             displayLoading(false)
             if(res){
+                setUploadPost({
+                    post_picture:"",
+                    posttitleinput:""
+                })
+                handleInfo2("Post uploaded successfully")
                 const user_get=await getUser(userDetails._id,token)
                 setUserDetails(user_get)
                 setTimeout(()=>handleNav('.profile','.main','.more'),2000)
@@ -175,7 +180,7 @@ const ProvideContext=({children}:{children:React.ReactNode})=>{
     }
     function clickNext(buttonId:number){
         if(buttonId!=3 && buttonId!=4 && registerDetails[`${inputsIndex[buttonId-1].typeId1}` as keyof typeof registerDetails]!="" && registerDetails[`${inputsIndex[buttonId-1].typeId2}` as keyof typeof registerDetails]!=""){
-            if(buttonId===1)setInfolist("Plese enter your Email and passord which is further used as LogIn credentials".split(" "))
+            if(buttonId===1)setInfolist("Plese enter your Email and password which is further used as LogIn credentials".split(" "))
             else if(buttonId===2)setInfolist("You can upload profile photo and enter occupation,both are optional".split(" "))
             setInputContent(inputsIndex[buttonId])
         }else if(buttonId===3){
